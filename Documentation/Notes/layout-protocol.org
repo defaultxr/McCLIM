@@ -273,10 +273,8 @@ and ~height~?
 
 *** allocate-space
 
-Function is used to make the sheet allocate its own space. For instance when
-called on the image-sheet-mixin, the image region is changed to the
-appropriate size. The size mandated by the allocate-space is final. Not all
-methods are listed.
+Function is used to make the sheet allocate its own space.  The size mandated
+by the allocate-space is final. Not all methods are listed.
 
 **** :around layout-protocol-mixin
 - Sets the pane-current-width/height
