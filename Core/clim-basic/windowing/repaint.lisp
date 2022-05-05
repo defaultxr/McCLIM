@@ -197,8 +197,9 @@
         (let* ((tr (sheet-transformation sheet))
                (r1 (rounded-bounding-rectangle (transform-region tr old-region)))
                (r2 (rounded-bounding-rectangle (transform-region tr region))))
-          (repaint-sheet (sheet-parent sheet)
-                         (region-union r1 r2)))))))
+          (unless (region-equal r1 r2)
+            (repaint-sheet (sheet-parent sheet)
+                           (region-union r1 r2))))))))
 
 (defmethod (setf sheet-transformation) :around (transformation (sheet basic-sheet))
   (let ((old-transformation (sheet-transformation sheet)))
@@ -209,13 +210,14 @@
                (new-transformation (sheet-transformation sheet))
                (new-region (transform-region new-transformation region))
                (old-region (transform-region old-transformation region)))
-          (if (or (region-equal new-region +everywhere+)
-                  (region-equal old-region +everywhere+))
-              (repaint-sheet (sheet-parent sheet) +everywhere+)
-              (repaint-sheet (sheet-parent sheet)
-                             (region-union
-                              (rounded-bounding-rectangle new-region)
-                              (rounded-bounding-rectangle old-region)))))))))
+          (unless (region-equal new-region old-region)
+            (if (or (region-equal new-region +everywhere+)
+                    (region-equal old-region +everywhere+))
+                (repaint-sheet (sheet-parent sheet) +everywhere+)
+                (repaint-sheet (sheet-parent sheet)
+                               (region-union
+                                (rounded-bounding-rectangle new-region)
+                                (rounded-bounding-rectangle old-region))))))))))
 
 (defun %set-sheet-region-and-transformation (sheet region transformation)
   (let ((old-transformation (sheet-transformation sheet))
