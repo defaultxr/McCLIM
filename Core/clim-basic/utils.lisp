@@ -14,6 +14,10 @@
 
 (in-package #:clim-internals)
 
+(defun random-color ()
+  (alexandria:random-elt
+   (list +blue+ +red+ +yellow+ +green+ +pink+ +cyan+ +deep-pink+)))
+
 (defun get-environment-variable (string)
   #+excl (sys:getenv string)
   #+(or cmu scl) (cdr (assoc string ext:*environment-list* :test #'string=))

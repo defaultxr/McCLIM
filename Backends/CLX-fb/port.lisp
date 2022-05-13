@@ -86,7 +86,7 @@
                  :sheet sheet))
 
 (defmethod port-force-output ((port clx-fb-port))
-  (map nil #'%mirror-force-output (all-mirrors port))
+  ;(map nil #'%mirror-force-output (all-mirrors port))
   (xlib:display-force-output (clx-port-display port)))
 
 (defmethod distribute-event :before

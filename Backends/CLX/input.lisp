@@ -196,6 +196,7 @@
                                          *clx-port* state)
                         :timestamp time)))
       (:configure-notify
+       (format *debug-io* "C")
        (cond ((and (eq (sheet-parent sheet) (graft sheet))
                    (graft sheet)
                    (not override-redirect-p)
@@ -254,6 +255,7 @@
        ;;   (think about changing a sheet's native transformation).
        ;;--GB
        ;;
+       (format *debug-io* "E")
        (make-instance 'window-repaint-event
                       :timestamp time
                       :sheet sheet

@@ -7,13 +7,12 @@
 (define-application-frame superapp ()
   ()
   (:panes
-   (int :interactor)
-   (lab1 :push-button-pane :label "dummy-1")
-   (lab2 :label-pane :label "dummy-2" :background +blue-violet+))
+   (int :application :scroll-bars :both)
+   (app :application :scroll-bars :both))
   (:layouts
-   (default (vertically () #|int|#
-              int
-              lab1 lab2))))
+   (default (spacing (:thickness 30)
+             (spacing (:thickness 30)
+               (vertically () int app))))))
 
 (defun app-main ()
   (let ((frame (make-application-frame 'superapp)))
@@ -21,3 +20,5 @@
             (clim-sys:make-process
              (lambda ()
                (run-frame-top-level frame))))))
+
+(find-application-frame 'superapp)

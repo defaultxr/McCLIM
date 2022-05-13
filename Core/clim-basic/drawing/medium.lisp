@@ -349,6 +349,9 @@
 
 (defmethod invoke-with-output-buffered
     ((medium basic-medium) continuation &optional (buffered-p t))
+  (if (medium-buffering-output-p medium)
+      (format *debug-io* ".")
+      (format *debug-io* "x"))
   (unwind-protect
        (letf (((medium-buffering-output-p medium) buffered-p))
          (unless buffered-p

@@ -412,6 +412,7 @@
           old-tb-y1 tb-y1
           old-tb-y2 tb-y2
           all-new-p nil)
+    (draw-rectangle* scroll-bar 0 0 10 10 :ink +red+)
     (medium-force-output scroll-bar)))
 
 (defun scroll-bar/compute-display (scroll-bar value)

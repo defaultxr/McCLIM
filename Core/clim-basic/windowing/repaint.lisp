@@ -32,7 +32,8 @@
   (declare (ignore region))
   (when (and (sheet-mirror sheet)
              (sheet-viewable-p sheet))
-    (call-next-method)))
+    (call-next-method)
+    (port-force-output (port sheet))))
 
 (defmethod handle-repaint :around ((sheet sheet-with-medium-mixin) region)
   (typecase region
@@ -58,6 +59,12 @@
 (defun sheet-visible-region (sheet)
   (untransform-region (sheet-native-transformation sheet)
                       (sheet-native-region* sheet)))
+
+(defmethod repaint-sheet :around ((sheet top-level-sheet-mixin) region)
+  (format *debug-io* "~%-----------topl~%")
+  (call-next-method)
+  (format *debug-io* "~%-----------done~%")
+  (sleep .1))
 
 (defmethod repaint-sheet ((sheet basic-sheet) region)
   (let* ((visible (sheet-visible-region sheet))
@@ -97,6 +104,7 @@
 
 (defmethod handle-event ((sheet standard-repainting-mixin)
                          (event window-repaint-event))
+  (format *debug-io* "~%H")
   (repaint-sheet sheet (window-event-region event)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -158,7 +166,10 @@
   (with-sheet-medium (medium sheet)
     (with-bounding-rectangle* (x1 y1 x2 y2)
         (region-intersection region (sheet-visible-region sheet))
-      (letf (((medium-background medium) (pane-background sheet)))
+      (letf (((medium-background medium)
+              (if (eql (pane-background sheet) +transparent-ink+)
+                  (random-color)
+                  (pane-background sheet))))
         (medium-clear-area medium x1 y1 x2 y2)))))
 
 ;;; Integration with region and transformation changes

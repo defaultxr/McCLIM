@@ -151,7 +151,7 @@ returned or error is signaled depending on the argument ERRORP.")
                       :initarg :redisplay-needed :initform nil))
   (:default-initargs
    :foreground +black+
-   :background *3d-normal-color*
+   :background +yellow+
    :text-style *default-text-style*))
 
 (defmethod initialize-instance :after ((obj basic-pane) &key text-style)

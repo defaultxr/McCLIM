@@ -123,7 +123,7 @@
                                               :button-press :button-release
                                               :owner-grab-button
                                               :enter-window :leave-window
-                                              :structure-notify
+                                              ;;:structure-notify
                                               :pointer-motion
                                               :button-motion)))
   (assert (null (sheet-direct-mirror sheet)))
