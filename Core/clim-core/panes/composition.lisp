@@ -1004,9 +1004,9 @@
 
 (defclass spacing-pane (;;standard-space-requirement-options-mixin
                         single-child-composite-pane)
-  ((border-width :initarg :thickness
-                 :initform 1))
-  (:documentation "Never trust a random documentation string."))
+  ((border-width :initarg :thickness))
+  (:documentation "Never trust a random documentation string.")
+  (:default-initargs :thickness 1))
 
 (defmacro spacing ((&rest options) &body contents)
   `(make-pane 'spacing-pane ,@options :contents (list ,@contents)))
@@ -1055,9 +1055,9 @@
 
 (defclass border-pane (outlined-pane)
   ((border-width :initarg :border-width
-                 :initform 1
                  :reader border-pane-width))
-  (:documentation ""))
+  (:documentation "")
+  (:default-initargs :border-width 1))
 
 (defmacro bordering ((&rest options) &body contents)
   `(make-pane 'border-pane ,@options :contents (list ,@contents)))
@@ -1179,6 +1179,7 @@
   (note-input-focus-changed (sheet-child pane) state))
 
 (defmethod note-space-requirements-changed ((pane viewport-pane) child)
+  (declare (ignore child))
   (multiple-value-bind (width height) (bounding-rectangle-size pane)
     (allocate-space pane width height)))
 
@@ -1589,19 +1590,20 @@ SCROLLER-PANE appear on the ergonomic left hand side, or leave set to
 ;;; LABEL PANE
 
 (defclass label-pane (single-child-composite-pane)
-  ((label :type string
-          :initarg :label
-          :accessor clime:label-pane-label
-          :initform "")
-   (alignment :type (member :bottom :top)
-              :initform :top
-              :initarg :label-alignment
-              :reader label-pane-label-alignment)
-   (background :initform *3d-normal-color*))
+  ((label
+    :type string
+    :initarg :label
+    :accessor clime:label-pane-label)
+   (alignment
+    :type (member :bottom :top)
+    :initarg :label-alignment
+    :reader label-pane-label-alignment))
   (:default-initargs
+   :background *3d-normal-color*
    :align-y    :center
-   :text-style (make-text-style :sans-serif nil nil))
-  (:documentation ""))
+   :text-style (make-text-style :sans-serif nil nil)
+   :label-alignment :top
+   :label ""))
 
 (defmethod reinitialize-instance :after ((instance label-pane)
                                          &key (label nil label-supplied-p))
@@ -1609,6 +1611,7 @@ SCROLLER-PANE appear on the ergonomic left hand side, or leave set to
     (setf (clime:label-pane-label instance) label)))
 
 (defmethod (setf clime:label-pane-label) :after (new-value (pane label-pane))
+  (declare (ignore new-value))
   (when (if-let ((requirements (pane-space-requirement pane)))
           (progn
             (setf (pane-space-requirement pane) nil)
@@ -1696,8 +1699,6 @@ SCROLLER-PANE appear on the ergonomic left hand side, or leave set to
                       (:right (- text-width))
                       (:center (- (/ text-width 2)))))
           ;; Draw label.
-          (draw-rectangle* pane x1 text-pivot-y x2 (+ text-pivot-y text-height)
-                           :ink (pane-background pane))
           (draw-text* pane label text-pivot-x text-pivot-y
                       :align-x align-x :align-y :top)
           ;; Draw border around child without drawing over the label text.
@@ -1725,7 +1726,10 @@ SCROLLER-PANE appear on the ergonomic left hand side, or leave set to
 (defparameter *mouse-scroll-distance* 4
   "Number of lines by which to scroll the window in response to the scroll wheel")
 
-(defmethod scroll-quantum (pane) 10)	; TODO: Connect this with the scroller-pane motion
+;; TODO: Connect this with the scroller-pane motion
+(defmethod scroll-quantum (pane)
+  (declare (ignore pane))
+  10)
 
 (defun find-viewport-for-scroll (pane)
   "Find a viewport in the chain of parents which contains 'pane',
